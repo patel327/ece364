@@ -1,0 +1,31 @@
+1. 
+import re
+
+if re.search(" A{2,5} ", inputstr)
+	print("input found")
+else
+	print("notfound")
+
+2.
+
+re.sub(r"[0-9]+\.[0-9]+", "float", "3.14 12.43 no 11")
+
+3.
+
+tuples, tuplen = re.subn(r"[0-9]+/.[0-9]+", "float", "3.14 12.43 no 11")
+
+print(tuplen)
+
+4.
+
+m = re.findall(r"(\d+)", "11 notnum 4 6 2 7 5")
+listm = [int(num) for num in m]
+avg = sum(listm)/len(listm)
+
+5. 
+
+re.sub(r"EE364", "EE461", "EE364 EE364EE364 EE364 EE364", 1)
+
+6.
+
+

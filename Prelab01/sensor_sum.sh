@@ -1,0 +1,29 @@
+#! /bin/bash
+#
+#$Author: ee364e07 $
+#$Date: 2016-01-17 21:40:39 -0500 (Sun, 17 Jan 2016) $
+#$HeadURL: svn+ssh://ece364sv@ecegrid-thin1/home/ecegrid/a/ece364sv/svn/S16/students/ee364e07/Prelab01/sensor_sum.sh $
+#$Revision: 85413 $
+#
+if (($# != 1))
+then
+	echo "User should provide one argument"
+	exit 1
+fi
+if [[ ! -r $1 ]]
+then
+	echo "Cannot read $1"
+	exit 1
+fi
+if [[ ! -e $1 ]]
+then
+	echo "$1 does not exist"
+	exit 1
+fi
+while read SensorNO First Second Third
+do
+	X=$(echo "$SensorNO" | cut -d '-' -f1)
+	let Y=$First+$Second+$Third	
+	echo $X $Y
+done < $1
+exit 0

@@ -1,0 +1,334 @@
+#! /usr/bin/env python3.4
+#
+#$Author$
+#$Date$
+#$HeadURL$
+#$Revision$
+
+class PointND:
+    def __init__(self, *args):
+        for arg in args:
+            if type(arg) is not float:
+                raise ValueError('Cannot instantiate an object with non-float values.')
+        self.t = args
+        self.n = len(args)
+
+    def __str__(self):
+        temp = []
+        rstr = '('
+        for arg in self.t[:-1]:
+            rstr += '{0:.2f}'.format(round(arg, 2)) + ', '
+        rstr += '{0:.2f}'.format(round(self.t[-1], 2)) + ')'
+        return rstr
+
+    def __hash__(self):
+        return(hash(self.t))
+
+    def distanceFrom(self, others):
+        if others.n != self.n:
+            raise ValueError("Cannot calculate distance between points of different cardinality.")
+        temp = 0.0
+        for i in range(self.n):
+            temp += (self.t[i] - others.t[i]) ** 2
+        temp = temp ** (1/2)
+        return temp
+
+    def nearestPoint(self, points):
+        if not points:
+            raise ValueError("Input cannot be empty.")
+        min = 1000000.0
+        leastone = 0
+        for point in points:
+            #print(str(point))
+            dist = self.distanceFrom(point)
+            if dist < min:
+                leastone = point
+                min = dist
+        return leastone
+
+    def clone(self):
+        newclone = PointND(*self.t)
+        return newclone
+
+    def __add__(self, other):
+        temp = []
+        if type(other) is PointND or type(other) is Point3D:
+            if self.n != other.n:
+                raise ValueError("Cannot operate on points with different cardinalities.")
+            for i in range(self.n):
+                temp.append(self.t[i] + other.t[i])
+            return PointND(*(tuple(temp)))
+        if type(other) is float:
+            for i in range(self.n):
+                temp.append(self.t[i] + other)
+            return PointND(*(tuple(temp)))
+
+    def __radd__(self, other):
+        temp = []
+        if type(other) is float:
+            for i in range(self.n):
+                temp.append(self.t[i] + other)
+            return PointND(*(tuple(temp)))
+
+    def __sub__(self, other):
+        temp = []
+        if type(other) is PointND or type(other) is Point3D:
+            if self.n != other.n:
+                raise ValueError("Cannot operate on points with different cardinalities.")
+            for i in range(self.n):
+                temp.append(self.t[i] - other.t[i])
+            return PointND(*(tuple(temp)))
+        if type(other) is float:
+            for i in range(self.n):
+                temp.append(round(self.t[i] - other,2))
+            return PointND(*(tuple(temp)))
+
+    def __truediv__(self, other):
+        temp = []
+        if type(other) is PointND:
+            if self.n != other.n:
+                raise ValueError("Cannot operate on points with different cardinalities.")
+            for i in range(self.n):
+                temp.append(self.t[i] / other.t[i])
+            return PointND(*(tuple(temp)))
+        if type(other) is float:
+            for i in range(self.n):
+                temp.append(round(self.t[i] / other,2))
+            return PointND(*(tuple(temp)))
+
+    def __mul__(self, other):
+        temp = []
+        if type(other) is PointND:
+            if self.n != other.n:
+                raise ValueError("Cannot operate on points with different cardinalities.")
+            for i in range(self.n):
+                temp.append(self.t[i] * other.t[i])
+            return PointND(*(tuple(temp)))
+        if type(other) is float:
+            for i in range(self.n):
+                temp.append(round(self.t[i] * other,2))
+            return PointND(*(tuple(temp)))
+
+    def __rmul__(self, other):
+        temp = []
+        if type(other) is float:
+            for i in range(self.n):
+                temp.append(self.t[i] * other)
+            return PointND(*(tuple(temp)))
+
+    def __neg__(self):
+        temp = []
+        for i in range(self.n):
+            temp.append(-self.t[i])
+        return PointND(*(tuple(temp)))
+
+    def __getitem__(self, item):
+        return self.t[item]
+
+    def __eq__(self, other):
+        if self.n != other.n:
+            raise ValueError("Cannot compare points with different cardinalities.")
+        for i in range(self.n):
+            if self.t[i] != other.t[i]:
+                return False
+        return True
+
+    def __ne__(self, other):
+        if self.n != other.n:
+            raise ValueError("Cannot compare points with different cardinalities.")
+        for i in range(self.n):
+            if self.t[i] != other.t[i]:
+                return True
+        return False
+
+    def __gt__(self, other):
+        if self.n != other.n:
+            raise ValueError("Cannot compare points with different cardinalities.")
+        temp = ()
+        for i in range(self.n):
+            temp += tuple([0.0])
+        if self.distanceFrom(PointND(*temp)) > other.distanceFrom(PointND(*temp)):
+            return True
+        return False
+
+    def __ge__(self, other):
+        if self.n != other.n:
+            raise ValueError("Cannot compare points with different cardinalities.")
+        temp = ()
+        for i in range(self.n):
+            temp += tuple([0.0])
+        if self.distanceFrom(PointND(*temp)) >= other.distanceFrom(PointND(*temp)):
+            return True
+        return False
+
+    def __le__(self, other):
+        if self.n != other.n:
+            raise ValueError("Cannot compare points with different cardinalities.")
+        temp = ()
+        for i in range(self.n):
+            temp += tuple([0.0])
+        if self.distanceFrom(PointND(*temp)) <= other.distanceFrom(PointND(*temp)):
+            return True
+        return False
+
+    def __lt__(self, other):
+        if self.n != other.n:
+            raise ValueError("Cannot compare points with different cardinalities.")
+        temp = ()
+        for i in range(self.n):
+            temp += tuple([0.0])
+        if self.distanceFrom(PointND(*temp)) < other.distanceFrom(PointND(*temp)):
+            return True
+        return False
+
+class Point3D(PointND):
+    def __init__(self, x=0.0, y=0.0, z=0.0):
+
+        self.x = x
+        self.y = y
+        self.z = z
+        PointND.__init__(self, x,y,z)
+
+class PointSet():
+    def __init__(self, **kwargs):
+        if not kwargs:
+            self.points = set()
+            self.n = 0
+        else:
+            keyl = kwargs.get("pointList", "notfound")
+            if keyl == "notfound":
+                raise KeyError("'pointList' input parameter not found.")
+            if not keyl:
+                raise ValueError("'pointList' input parameter cannot be empty.")
+            self.points = set(keyl)
+            self.n = keyl[0].n
+            for arg in keyl:
+                if arg.n != self.n:
+                    raise ValueError("Expecting a point with cardinality {0}.".format(self.n))
+
+    def addPoint(self, p):
+        if p.n != self.n:
+            raise ValueError("Expecting a point with cardinality {0}.".format(self.n))
+        self.points.add(p)
+
+    def count(self):
+        return len(self.points)
+
+    def computeBoundingHyperCube(self):
+        minlist = []
+        maxlist = []
+        min = 1000.0
+        max = 0.0
+        for j in range(self.n):
+            min = 1000.0
+            max = 0.0
+            for point in self.points:
+                print((point[j]))
+                if point[j] < min:
+                    min = point[j]
+                if point[j] > max:
+                    max = point[j]
+            minlist.append(min)
+            maxlist.append(max)
+        print(minlist)
+        print(maxlist)
+        return (PointND(*(tuple(minlist))),PointND(*(tuple(maxlist))))
+
+    def computeNearestNeighbors(self, otherPointSet):
+        rlist = []
+        mini = 1000.0
+        for point in self.points:
+            mini = 1000.0
+            for otherpoint in otherPointSet.points:
+                if point.distanceFrom(otherpoint) < mini:
+                    min = otherpoint
+                    mini = point.distanceFrom(otherpoint)
+            rlist.append((point ,min))
+        return rlist
+
+    def __add__(self, other):
+        self.addPoint(other)
+        return self
+
+    def __sub__(self, other):
+        if other in self.points:
+            self.points.discard(other)
+        return self
+
+    def __contains__(self, item):
+        if item in self.points:
+            return True
+        return False
+
+
+
+
+
+if __name__ == '__main__':
+    #pobj = PointND(3.54444, 4.9, 6.5)
+    #print(str(pobj))
+    #print(str(pobj.t) == "(3.54444, 4.9, 6.5)")
+    #print(pobj.n)
+    #p = PointND(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
+    #q = PointND(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    #print(p.distanceFrom(q))
+    #p = PointND(0.0, 0.0)
+    #pointList = [PointND(1.5, 2.7), PointND(1.0, 1.0), PointND(-2.0, 3.0)]
+    #q = p.nearestPoint(pointList)
+    #print(q.t)
+    #p = PointND(3.14, 0.0, 2.71, -1.0, 10.10)
+    #q = p.clone()
+    #print(str(q))
+    #p1 = PointND(1.0, 2.1, 3.2, 3.4, 4.5)
+    #q = 10.0 + p1
+    #print(q.t)
+    #p1 = PointND(1.0, 2.1, 3.2, 3.4, 4.5)
+    #p2 = PointND(0.5, 0.4, 0.3, 0.2, 0.1)
+    #p3 = PointND(0.5, 0.4, 0.1)
+
+    #q = p1 + p2
+    #print(q.t)
+    #print(q is not p1 and q is not p2)
+    #p1 = PointND(1.0, 2.1, 3.2, 3.4, 4.5)
+    #p2 = PointND(0.5, 0.6, 0.7, 0.9, 0.5)
+    #p3 = PointND(0.5, 0.4, 0.1)
+
+    #q = p1 - p2
+    #print(q.t)
+    #p1 = PointND(11.0, 12.1, 13.2, 13.4, 14.5)
+    #q = p1 - 10.0 #had to use round for this
+    #print(q.t)
+    #p1 = PointND(110.0, 121.0, 132.0, 134.0, 145.0)
+    #q = p1 / 10.0
+    #print(q.t)
+    #p1 = PointND(11.0, 12.1, 13.2, 13.4, 14.5)
+    #q = 10.0 * p1
+    #print(q.t)
+    #p1 = PointND(1.2, -6.9, 5.7, -8.8)
+    #q = -p1
+    #print(q.t)
+    #p1 = PointND(1.2, -6.9, 5.7, -8.8)
+    #print(p1[3])
+    #p1 = PointND(1.0, 2.1, 3.2, 3.4, 4.5)
+    #p2 = PointND(1.0, 2.1, 3.2, 3.3, 4.5)
+    #p3 = PointND(1.0, 2.1, 3.2)
+    #print(p1!=p2)
+    #p1 = PointND(1.0, 2.1, 3.2)
+    #p2 = PointND(1.0, 2.1, 3.2)
+    #print(p2 <= p1)
+    #p = Point3D(-3.0, 2.7, 3.1415)
+    #print(str(p))
+    #p1 = Point3D(1.0, 2.1, 3.2)
+    #p2 = Point3D(0.5, 0.4, 0.3)
+    #print(str(p1))
+    #print(str(p2))
+    #print(p1 + p2)
+    #print((p1 + p2).t)
+    p = PointND(1.2, 5.6, 7.8)
+    q = PointND(0.9, -45.3, 12.11)
+    w = PointND(0.0, 0.0, 0.0)
+
+    pointList = [p, q, w, p, q]
+    p1 = PointSet(pointList=pointList)
+    print(p1.points)
+    print(p1.n)

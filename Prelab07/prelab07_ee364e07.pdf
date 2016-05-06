@@ -1,0 +1,13 @@
+1. A class specifies member functions and member variables that belong to an object. An object is an instance of a class.
+
+2. Member variables represent the state of an object. Each object instance maintains its own member variables. A regular variable is not associated with an object.
+
+3. Member functions are part of a class. You pass in the self argument as a way to differentiate between the different objects created by the same class. Regular functions are not associated with a class and thus do not need a self argument passed.
+
+4. Inheritance - ISA relationship
+Composition - HASA relationship
+
+5. A constructor is a special member function that is called to instantiate a class. The constructor is only called once during the lifetime of an object.
+The constructor is responsible for initializing the state (member variables) of an object.
+
+6. __init__ is reserved for defining the constructor. It is only called once in an object's lifetime.

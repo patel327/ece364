@@ -1,0 +1,161 @@
+#! /usr/local/bin/env python3.4
+#
+#$Author: ee364e07 $
+#$Date: 2016-02-07 11:56:55 -0500 (Sun, 07 Feb 2016) $
+#$HeadURL: svn+ssh://ece364sv@ecegrid-thin1/home/ecegrid/a/ece364sv/svn/S16/students/ee364e07/Prelab04/dataStructs.py $
+#$Revision: 87785 $
+
+import sys
+import os
+import math
+import glob
+import string
+import filecmp
+
+def getWordFrequency():
+    names = glob.glob('files/*')
+    dict = {}
+    for name in names:
+        with open(name, 'r')as fname:
+            lines = fname.readlines()
+            #print(lines)
+            #print("Kappa")
+            for line in lines:
+                line = line.strip()
+                #print(line)
+                for word in line.split():
+                    exclude = set(string.punctuation)
+                    word = ''.join(ch for ch in word if ch not in exclude)#from the stack265960
+                    #word = word.replace(".","")
+                    #word = word.replace(",","")
+                    #print(word)
+                    if not word in dict:
+                        dict[word] = 1
+                    else:
+                        dict[word] += 1
+    #print(dict['Pellentesque'])
+
+    return dict
+
+def getDuplicates():
+    names = glob.glob('files/*.txt')
+    #print(names)
+    dict = {}
+
+    w = 1
+    wc = 0
+    for name in names:
+        unique = 0
+        for tups in dict:
+            #print(word)
+            #print(tups)
+            wco, word = dict[tups]
+            testf = "files/" + tups + ".txt"
+            if filecmp.cmp(testf, name):
+                word.append(name[6:9])
+
+
+
+
+                unique = 1
+        if unique == 0:  ##UNIQUE WORD CO
+            #print(name[6:9])
+            with open(name, 'r') as fname:
+                lines = fname.readlines()
+                for line in lines:
+                    count = set()
+                    line = line.strip()
+                    for words in line.split():
+
+                        exclude = set(string.punctuation)
+                        words = ''.join(ch for ch in words if ch not in exclude)
+                        count.add(words)
+                        if name[6:9] == "1WS":
+                            print(w)
+                            print(words)
+                            w +=1
+                        wc = len(count)
+                    print(count)
+                    #print(count.values())
+                    #print(name)
+            dict[name[6:9]] = (wc ,[name[6:9]])
+            #print(dict[name[6:9]])
+    #print(dict.items())
+    return dict
+
+
+
+def getPurchaseReport():
+    #first get a dictionary of prices
+    names = glob.glob("purchases/Item List.txt")
+    #print("ka")
+    prices = {}
+    for name in names:
+        with open(name, 'r') as fname:
+            lines = fname.readlines()
+            for line in lines[2:]:
+                line = line.strip()
+                #print(line)
+                words = line.split()
+                for item in words[::2]:
+                    for word in words[1:2]:
+                        prices[item] = word
+                        break
+                    #print(prices.items())
+    reports = glob.glob("purchases/pu*.txt")
+    costs = {}
+    for report in reports:
+        with open(report, 'r') as filname:
+            lines = filname.readlines()
+            for line in lines[2:]:
+                line = line.strip()
+                words = line.split()
+                for item in words[::2]:
+                    for word in words[1:2]:
+                        #print(word)
+                        #print(prices[item][1:])
+                        #print(report)
+                        #ez = float(prices[item][1:]) * float(word)
+                        if not int(report[21]) in costs:
+                            costs[int(report[21])] = float(prices[item][1:]) * float(word)
+                        else:
+                            costs[int(report[21])] += float(prices[item][1:]) * float(word)
+                            costs[int(report[21])] = round(costs[int(report[21])], 2)
+                        break
+    return costs
+
+
+
+
+def getTotalSold():
+    names = glob.glob("purchases/Item List.txt")
+    #print("ka")
+    quant = {}
+    for name in names:
+        with open(name, 'r') as fname:
+            lines = fname.readlines()
+            for line in lines[2:]:
+                line = line.strip()
+                #print(line)
+                words = line.split()
+                for item in words[::2]:
+                    quant[item] = 0
+                    print(item)
+    reports = glob.glob("purchases/pu*.txt")
+    for report in reports:
+        with open(report, 'r') as filname:
+            lines = filname.readlines()
+            for line in lines[2:]:
+                line = line.strip()
+                words = line.split()
+                for item in words[::2]:
+                    for word in words[1:2]:
+                        quant[item] += int(word)
+    return quant
+
+
+if __name__ == '__main__':
+    print(sys.version)
+    #list = getWordFrequency()
+    #print(list)
+    getTotalSold()
