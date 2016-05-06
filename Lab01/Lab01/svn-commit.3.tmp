@@ -1,0 +1,5 @@
+add files
+--This line, and those below, will be ignored--
+
+AM   getFinalScores.bash
+AM   getCourseStats.bash

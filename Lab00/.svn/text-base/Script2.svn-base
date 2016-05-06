@@ -1,0 +1,12 @@
+#! /bin/bash
+#
+#$Author$
+#$Date$
+#$HeadURL$
+#$Revision$
+
+for (( I=$@; I > -1; I--))
+do
+  echo ${I}
+done
+

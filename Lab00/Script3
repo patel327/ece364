@@ -1,0 +1,15 @@
+#! /bin/bash
+#
+#$Author: ee364e07 $
+#$Date: 2016-01-13 11:12:52 -0500 (Wed, 13 Jan 2016) $
+#$HeadURL: svn+ssh://ece364sv@ecegrid-thin1/home/ecegrid/a/ece364sv/svn/S16/students/ee364e07/Lab00/Script3 $
+#$Revision: 84519 $
+
+for (( I=$@; I > -1; I--))
+do
+	if (( I%3 == 0 ))
+	then  
+		echo ${I}
+	fi
+done
+

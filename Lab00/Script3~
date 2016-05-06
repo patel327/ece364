@@ -1,0 +1,15 @@
+#! /bin/bash
+#
+#$Author$
+#$Date$
+#$HeadURL$
+#$Revision$
+
+for (( I=$@; I > -1; I--))
+do
+	if [[ I%3 == 0 ]]
+	then  
+		echo ${I}
+	fi
+done
+

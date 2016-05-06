@@ -1,0 +1,63 @@
+#! /bin/bash
+#
+#$Author$
+#$Date$
+#$HeadURL$
+#$Revision$
+#
+if(($#!=1))
+then
+	echo 'Usage: ./getCourseStats.bash <course name>'
+	exit 1
+fi
+if [[ $1 != "ece364" &&  $1 != "ece337" && $1 != "ece468" ]]
+then
+	echo "Error: course $1 is not a valid option."
+	exit 5
+fi
+N=1
+rtotal=0
+avgs=0
+scoretotal=0
+greatest=0
+FILENAME=$(echo "gradebooks/${1}_section${N}.txt")
+#echo $FILENAME
+while [[ -e $FILENAME ]]
+	do	
+	#getFinalScores.bash 
+	FILENAME=$(echo "gradebooks/${1}_section${N}.txt")	
+	if [[ -e $FILENAME ]]
+	then	
+		#echo $FILENAME
+		getFinalScores.bash $FILENAME
+		if(($?!=0))
+		then
+			echo "Error while running getFinalScores.bash"
+			exit 3
+		fi
+		OUTNAME=$(echo "gradebooks/${1}_section${N}.out")
+		total=$(wc -l $FILENAME | cut -d " " -f1)
+		let rtotal=$total+$rtotal
+		while read line
+		do
+			score=$(echo $line | cut -d "," -f2)
+			let scoretotal=$score+$scoretotal
+			if(($score>$greatest))
+			then
+				greatest=$score
+				highscore=$line
+			fi
+		done < $OUTNAME
+	fi	
+	((N++))
+		
+	done
+#
+echo "Total students: $rtotal" 
+let avgs=$scoretotal/$rtotal
+echo "Average Score: $avgs"
+#echo $highscore
+hname=$(echo $highscore | cut -d "," -f1)
+hs=$(echo $highscore | cut -d "," -f2)
+echo "$hname had the highest score of $hs"
+exit 0

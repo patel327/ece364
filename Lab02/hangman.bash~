@@ -1,0 +1,58 @@
+#! /bin/bash
+#
+#$Author: ee364e07 $
+#$Date: 2016-01-27 11:19:20 -0500 (Wed, 27 Jan 2016) $
+#$HeadURL: svn+ssh://ece364sv@ecegrid-thin1/home/ecegrid/a/ece364sv/svn/S16/students/ee364e07/Lab02/hangman.bash $
+#$Revision: 87088 $
+#
+randw=(banana parsimonious sesquipedalian)
+word=(${randw[(($RANDOM % 3))]})
+letters=$(echo $word | wc -c)
+((letters--))
+encarr=()
+wordarr=()
+i=0
+while [[ ${word:$i:1} != "" ]]
+do
+	encarr[i]="."
+	wordarr[i]=${word:$i:1}
+	#echo $i
+	#echo 
+	((i++))
+done
+echo "Your word is $letters letters long."
+yes=0
+while [[ ${wordarr[*]} != ${encarr[*]} ]]
+do		
+	echo "Word is : ${encarr[*]}"
+	read -p "  Make a guess: " guess
+	oldarr=${encarr[*]}
+	for j in {0..14}
+	do
+		#echo $j 123
+		if [[ ${word:$j:1} == $guess ]]
+		then
+			#echo 1414	
+			yes=1		
+			encarr[j]=$guess
+			#echo "Good going!"
+			#echo 1414
+		else
+			yes=0			
+			#echo "Sorry, try again."
+		fi
+	done
+	#echo $yes
+	if [[ ${oldarr[*]} != ${encarr[*]} ]]
+	then
+		echo "  Good going!"
+	else
+		echo "  Sorry, try again."
+	fi
+	#echo ${encarr[*]}
+	#echo ${wordarr[*]}
+	echo
+	echo
+	
+done
+exit 0

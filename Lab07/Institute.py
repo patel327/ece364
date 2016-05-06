@@ -1,0 +1,139 @@
+#! /usr/bin/env python3.4
+#
+#$Author: ee364e07 $
+#$Date: 2016-03-02 11:00:24 -0500 (Wed, 02 Mar 2016) $
+#$HeadURL: svn+ssh://ece364sv@ecegrid-thin1/home/ecegrid/a/ece364sv/svn/S16/students/ee364e07/Lab07/Institute.py $
+#$Revision: 89237 $
+
+class Simulation:
+    def __init__(self, simulationNumber, simulationDate, chipName, chipCount, chipCost):
+        self.simulationNumber = simulationNumber
+        self.simulationDate = simulationDate
+        self.chipName = chipName
+        self.chipCost = chipCost
+        self.chipCount = chipCount
+        self.simulationCost = round(self.chipCost*self.chipCount, 2)
+
+    def __str__(self):
+        temp = self.chipName
+        temp +=  ": {0:03d},".format(self.simulationNumber)
+        temp += " " + self.simulationDate
+        temp += ", $" + "{0:06.2f}".format(self.simulationCost)
+        return temp
+
+
+class Employee:
+    def __init__(self, employeeName, employeeID):
+        self.employeeName = employeeName
+        self.employeeID = employeeID
+        self.simulationsDict = {}
+
+    def addSimulation(self, sim):
+        key = self.simulationsDict.get(sim.simulationNumber, "notfound")
+        if key == "notfound":
+            self.simulationsDict[sim.simulationNumber] = sim
+        else:
+            self.simulationsDict[sim.simulationNumber] = sim
+
+    def getSimulation(self, simNo):
+        key = self.simulationsDict.get(simNo, "notfound")
+        if key == "notfound":
+            return None
+        else:
+            return self.simulationsDict[simNo]
+
+    def getWorkload(self):
+        temp = self.employeeID
+        temp += ", " + self.employeeName
+        temp += ": " + "{0:02d}".format(len(self.simulationsDict))
+        temp += " Simulations"
+        temp += "\n"
+        listofs = []
+
+        for value in self.simulationsDict.values():
+            listofs.append(str(value))
+            #temp += "\n"
+        #temp += str(self.simulationsDict.values()[-1])
+        listofs.sort()
+        for val in listofs[:-1]:
+            temp += val
+            temp += "\n"
+        temp += listofs[-1]
+
+        return temp
+
+
+    def __str__(self):
+        temp = self.employeeID
+        temp += ", " + self.employeeName
+        temp += ": " + "{0:02d}".format(len(self.simulationsDict))
+        temp += " Simulations"
+        return temp
+
+    def addWorkload(self, fileName):
+        with open(fileName, "r") as fname:
+            lines = fname.readlines()
+
+            for line in lines[2:]:
+                words = line.split()
+
+                sim = Simulation(int(words[0]), words[1], words[2], int(words[3]), float(words[4].strip("$")))
+                self.addSimulation(sim)
+
+
+class Facility:
+    def __init__(self, facilityName):
+        self.facilityName = facilityName
+        self.employeesDict = {}
+
+    def addEmployee(self, employee):
+        key = self.employeesDict.get(employee.employeeName, "notfound")
+        if key == "notfound":
+            self.employeesDict[employee.employeeName] = employee
+        else:
+            self.employeesDict[employee.employeeName] = employee
+
+    def getEmployees(self, *args):
+        listofe = []
+        for arg in args:
+            listofe.append(self.employeesDict[arg])
+        return listofe
+
+    def __str__(self):
+        temp = self.facilityName
+        temp += ": " + "{0:02d}".format(len(self.employeesDict))
+        temp += " Employees\n"
+
+        listofe = []
+
+        for value in self.employeesDict.values():
+            listofe.append(str(value))
+            #temp += "\n"
+        #temp += str(self.simulationsDict.values()[-1])
+        listofe.sort()
+        for val in listofe[:-1]:
+            temp += val
+            temp += "\n"
+        temp += listofe[-1]
+
+        return temp
+
+    def getSimulation(self, simNo):
+        for value in self.employeesDict.values():
+            if value.getSimulation(simNo):
+                return value.getSimulation(simNo)
+        return None
+
+
+if __name__ == '__main__':
+    #sim = Simulation(55, "02/29/2016", "i3-9988", 3, 3.14)
+    #print(str(sim))
+    s1 = Simulation(128, "01/01/2016", "SomeChip", 20, 3.14)
+    s2 = Simulation(497, "05/07/2016", "AnotherChip", 10, 2.71)
+    s3 = Simulation(5, "11/12/2016", "UniqueChip", 45, 10.0)
+    e = Employee("Elizabeth Rogers", "987-63-1245")
+
+    for s in [s1, s2, s3]:
+            e.addSimulation(s)
+
+    print(e.getWorkload())

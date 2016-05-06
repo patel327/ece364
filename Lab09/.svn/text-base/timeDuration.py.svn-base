@@ -1,0 +1,74 @@
+#! /usr/bin/env python3.4
+#
+#$Author$
+#$Date$
+#$HeadURL$
+#$Revision$
+
+import sys
+
+class TimeSpan:
+    def __init__(self, weeks, days, hours):
+        newhour = hours
+        newday = days
+        if type(weeks) is not int:
+            raise TypeError("only accepts ints")
+        if type(hours) is not int:
+            raise TypeError("only accepts ints")
+        if type(days) is not int:
+            raise TypeError("only accepts ints")
+        if weeks < 0:
+            raise ValueError("cannot be negative")
+        if days < 0:
+            raise ValueError("cannot be negative")
+        if hours < 0:
+            raise ValueError("cannot be negative")
+        if hours >= 24:
+            newhour = hours % 24
+            newday += hours // 24
+        if newday >= 7:
+            weeks += newday // 7
+            newday = newday % 7
+        self.days = newday
+        self.weeks = weeks
+        self.hours = newhour
+
+    def __str__(self):
+        #": {0:03d},".format(self.simulationNumber)
+        temp = "{0:02d}W ".format(self.weeks)
+        temp += "{0:01d}D ".format(self.days)
+        temp += "{0:02d}H".format(self.hours)
+        print(temp)
+        return temp
+
+    def getTotalHours(self):
+        return self.weeks * 7 * 24 + self.days *24 + self.hours
+
+    def __add__(self, other):
+        if type(other) is not TimeSpan:
+            raise TypeError("TimeSpan instance expected")
+        return TimeSpan(weeks = self.weeks + other.weeks, days= self.days + other.days, hours = self.hours + other.hours)
+
+    def __mul__(self, other):
+        if type(other) is not int:
+            raise TypeError
+        if other < 1:
+            raise ValueError
+        return TimeSpan(weeks = self.weeks * other, days= self.days * other, hours= self.hours * other)
+
+    def __rmul__(self, other):
+        if type(other) is not int:
+            raise TypeError
+        if other < 1:
+            raise ValueError
+        return TimeSpan(weeks = self.weeks * other, days= self.days * other, hours= self.hours * other)
+
+
+
+if __name__ == '__main__':
+    print(sys.version)
+    ts = TimeSpan(weeks = 11, days =13, hours =50)
+    print(ts.days)
+    print(ts.hours)
+    print(ts.weeks)
+    str(ts)
